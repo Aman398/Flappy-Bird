@@ -36,16 +36,21 @@ let gravity = 0.4;
 let gameOver = false;
 let score = 0;
 
+// let changePipe = 1500;
+
 window.onload = function() {
+    gameOver = true;
+    
+    startTime = new Date();
     board = document.getElementById("board");
     board.height = boardHeight;
     board.width = boardWidth;
     context = board.getContext("2d"); //used for drawing on the board
-
+    
     //draw flappy bird
     // context.fillStyle = "green";
     // context.fillRect(bird.x, bird.y, bird.width, bird.height);
-
+    
     //load images
     birdImg = new Image();
     birdImg.src = "imgs/flappybird.png";   
@@ -53,14 +58,18 @@ window.onload = function() {
     birdImg.onload = function() {
         context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
     }
-
+    
     topPipeImg = new Image();
     topPipeImg.src = "imgs/toppipe.png";
-
+    
     bottomPipeImg = new Image();
     bottomPipeImg.src = "imgs/bottompipe.png";
 
+    context.font = "20px Verdana";
+    context.fillText("Press Space bar to start", 56, 230);
+
     requestAnimationFrame(update);
+    
     setInterval(placePipes, 1500); //every 1.5 seconds
     document.addEventListener("keydown", moveBird);
 }
@@ -74,27 +83,39 @@ function update() {
 
     //bird
     velocityY += gravity;
+
+    // if(score >= 3)
+    //     gravity = 0.45;
+
     // bird.y += velocityY;
     bird.y = Math.max(bird.y + velocityY, 0); //apply gravity to current bird.y, limit the bird.y to top of the canvas
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
-
+    
     if (bird.y > board.height) {
         gameOver = true;
     }
-
+    
     //pipes
     for (let i = 0; i < pipeArray.length; i++) {
         let pipe = pipeArray[i];
         pipe.x += velocityX;
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
-
+        
         if (!pipe.passed && bird.x > pipe.x + pipe.width) {
             score += 0.5; //0.5 because there are 2 pipes! so 0.5*2 = 1, 1 for each set of pipes
             pipe.passed = true;
+            // if(score >= 3){
+            //     velocityX = -2.5;
+            //     changePipe = 1250;
+            //     // clearInterval(interval);
+            //     // setInterval(placePipes, changePipe); //every 1.5 seconds
+            // }
         }
 
         if (detectCollision(bird, pipe)) {
             gameOver = true;
+            // gravity = 0.4;
+            // velocityX = -2;
         }
     }
 
@@ -104,12 +125,14 @@ function update() {
     }
 
     //score
-    context.fillStyle = "white";
+    context.fillStyle = "black";
     context.font="45px sans-serif";
-    context.fillText(score, 5, 45);
-
+    context.fillText(score, 5, 35);
+    
     if (gameOver) {
-        context.fillText("GAME OVER", 5, 90);
+        context.font="15px sans-serif";
+        context.fillText("Game Over, Press Space bar to restart", 5, 55);
+        context.font="45px sans-serif";
     }
 }
 
