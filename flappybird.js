@@ -1,16 +1,17 @@
-//board
+// setting the board dimensions 
 let board;
 let boardWidth = 360;
 let boardHeight = 640;
 let context;
 
-//bird
-let birdWidth = 34; //width/height ratio = 408/228 = 17/12
+// setting the bird dimensions 
+let birdWidth = 34;                    // width/height ratio = 408/228 = 17/12, in same ration bird is drawn
 let birdHeight = 24;
-let birdX = boardWidth/8;
+let birdX = boardWidth/8;              // position of bird on the board 
 let birdY = boardHeight/2;
 let birdImg;
 
+// bird object where it contains it's cordinate and it's dimension
 let bird = {
     x : birdX,
     y : birdY,
@@ -18,44 +19,38 @@ let bird = {
     height : birdHeight
 }
 
-//pipes
+//initializing the pipes
 let pipeArray = [];
-let pipeWidth = 64; //width/height ratio = 384/3072 = 1/8
+let pipeWidth = 64; 
 let pipeHeight = 512;
 let pipeX = boardWidth;
 let pipeY = 0;
 
+// two types of pipes
 let topPipeImg;
 let bottomPipeImg;
 
-//physics
-let velocityX = -2; //pipes moving left speed
+// setting the movement of pipes 
+let velocityX = -2; //pipes moving to left
 let velocityY = 0; //bird jump speed
 let gravity = 0.4;
+let changePipe = 1500;
+let myInterval;
 
+// setting the game variables
 let gameOver = true;
 let score = 0;
 let highScore = 0;
 
-let changePipe = 1500;
-let myInterval;
-
 window.onload = function() {
-    
-    startTime = new Date();
     board = document.getElementById("board");
     board.height = boardHeight;
     board.width = boardWidth;
     context = board.getContext("2d"); //used for drawing on the board
     
-    //draw flappy bird
-    // context.fillStyle = "green";
-    // context.fillRect(bird.x, bird.y, bird.width, bird.height);
-    
     //load images
     birdImg = new Image();
-    birdImg.src = "imgs/flappybird.png";   
-    //"./flappybird.png";
+    birdImg.src = "imgs/flappybird.png";  
     birdImg.onload = function() {
         context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
     }
@@ -66,7 +61,7 @@ window.onload = function() {
     bottomPipeImg = new Image();
     bottomPipeImg.src = "imgs/bottompipe.png";
 
-    context.font = "20px Verdana";
+    context.font = "20px cursive";
     context.fillText("Press Space bar to start", 56, 230);
 
     requestAnimationFrame(update);
@@ -102,6 +97,7 @@ function update() {
         if (!pipe.passed && bird.x > pipe.x + pipe.width) {
             score += 0.5; //0.5 because there are 2 pipes! so 0.5*2 = 1, 1 for each set of pipes
             pipe.passed = true;
+            // changing the speed of bird, or increasing the speed of bird to increase difficulty 
             switch(score){
                 case 10:
                     velocityX = -2.4;
@@ -153,10 +149,10 @@ function update() {
 
     //clear pipes
     while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
-        pipeArray.shift(); //removes first element from the array
+        pipeArray.shift(); //removes first element from the array, done to reduce the use of space/memory 
     }
 
-    //score
+    //print score 
     context.fillStyle = "black";
     context.font="45px sans-serif";
     context.fillText(score, 5, 35);
@@ -172,7 +168,7 @@ function update() {
         else if(highScore == score && score != 0){
             context.fillText("You have equalled the highest score", 5 , 95);
         }
-        // console.log(highScore);
+        // console.log(highScore);                            // for checking whether highScore is changing or not
         context.fillText("Current Highest Score: ", 5, 75);
         context.fillText(highScore, 159, 75);    
         context.font="45px sans-serif";
@@ -184,11 +180,8 @@ function placePipes() {
         return;
     }
 
-    //(0-1) * pipeHeight/2.
-    // 0 -> -128 (pipeHeight/4)
-    // 1 -> -128 - 256 (pipeHeight/4 - pipeHeight/2) = -3/4 pipeHeight
-    let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
-    let openingSpace = board.height/4;
+    let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);     // setting height of top pipe using random function
+    let openingSpace = board.height/4;      // giving a constant space between top and bottom pipe
 
     let topPipe = {
         img : topPipeImg,
@@ -214,9 +207,9 @@ function placePipes() {
 function moveBird(e) {
     if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
         //jump
-        velocityY = -6;
+        velocityY = -6;      // negative means moving up
 
-        //reset game
+        //reset the game
         if (gameOver) {
             bird.y = birdY;
             pipeArray = [];
