@@ -35,8 +35,10 @@ let gravity = 0.4;
 
 let gameOver = false;
 let score = 0;
+let highScore = 0;
 
-// let changePipe = 1500;
+let changePipe = 1500;
+let interval;
 
 window.onload = function() {
     gameOver = true;
@@ -70,7 +72,7 @@ window.onload = function() {
 
     requestAnimationFrame(update);
     
-    setInterval(placePipes, 1500); //every 1.5 seconds
+    interval = setInterval(placePipes, changePipe); //every 1.5 seconds
     document.addEventListener("keydown", moveBird);
 }
 
@@ -85,7 +87,7 @@ function update() {
     velocityY += gravity;
 
     // if(score >= 3)
-    //     gravity = 0.45;
+        // gravity = 0.45;
 
     // bird.y += velocityY;
     bird.y = Math.max(bird.y + velocityY, 0); //apply gravity to current bird.y, limit the bird.y to top of the canvas
@@ -107,8 +109,8 @@ function update() {
             // if(score >= 3){
             //     velocityX = -2.5;
             //     changePipe = 1250;
-            //     // clearInterval(interval);
-            //     // setInterval(placePipes, changePipe); //every 1.5 seconds
+            //     clearInterval(interval);
+            //     setInterval(placePipes, changePipe); //every 1.25 seconds
             // }
         }
 
@@ -132,6 +134,17 @@ function update() {
     if (gameOver) {
         context.font="15px sans-serif";
         context.fillText("Game Over, Press Space bar to restart", 5, 55);
+
+        if(highScore < score){
+            highScore = score;
+            context.fillText("Congratulation you have broken the highest score", 5 , 95);
+        }
+        else if(highScore == score && score != 0){
+            context.fillText("You have equalled the highest score", 5 , 95);
+        }
+        // console.log(highScore);
+        context.fillText("Highest Score now: ", 5, 75);
+        context.fillText(highScore, 137, 75);    
         context.font="45px sans-serif";
     }
 }
