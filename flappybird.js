@@ -33,15 +33,14 @@ let velocityX = -2; //pipes moving left speed
 let velocityY = 0; //bird jump speed
 let gravity = 0.4;
 
-let gameOver = false;
+let gameOver = true;
 let score = 0;
 let highScore = 0;
 
 let changePipe = 1500;
-let interval;
+let myInterval;
 
 window.onload = function() {
-    gameOver = true;
     
     startTime = new Date();
     board = document.getElementById("board");
@@ -72,7 +71,7 @@ window.onload = function() {
 
     requestAnimationFrame(update);
     
-    interval = setInterval(placePipes, changePipe); //every 1.5 seconds
+    myInterval = setInterval(placePipes, changePipe); //every 1.5 seconds
     document.addEventListener("keydown", moveBird);
 }
 
@@ -85,9 +84,6 @@ function update() {
 
     //bird
     velocityY += gravity;
-
-    // if(score >= 3)
-        // gravity = 0.45;
 
     // bird.y += velocityY;
     bird.y = Math.max(bird.y + velocityY, 0); //apply gravity to current bird.y, limit the bird.y to top of the canvas
@@ -106,18 +102,52 @@ function update() {
         if (!pipe.passed && bird.x > pipe.x + pipe.width) {
             score += 0.5; //0.5 because there are 2 pipes! so 0.5*2 = 1, 1 for each set of pipes
             pipe.passed = true;
-            // if(score >= 3){
-            //     velocityX = -2.5;
-            //     changePipe = 1250;
-            //     clearInterval(interval);
-            //     setInterval(placePipes, changePipe); //every 1.25 seconds
-            // }
+            switch(score){
+                case 10:
+                    velocityX = -2.4;
+                    changePipe = 1200;
+                    clearInterval(myInterval);
+                    myInterval = setInterval(placePipes, changePipe); //every 1.2 seconds
+                break;
+                case 20:
+                    velocityX = -2.8;
+                    changePipe = 1100;
+                    clearInterval(myInterval);
+                    myInterval = setInterval(placePipes, changePipe); //every 1.1 seconds
+                break;
+                case 35:
+                    velocityX = -3.2;
+                    changePipe = 1050;
+                    clearInterval(myInterval);
+                    myInterval = setInterval(placePipes, changePipe); //every 1.05 seconds
+                break;
+                case 60:
+                    velocityX = -3.6;
+                    changePipe = 950;
+                    clearInterval(myInterval);
+                    myInterval = setInterval(placePipes, changePipe); //every 0.95 seconds
+                break;
+                case 95:
+                    velocityX = -4;
+                    changePipe = 800;
+                    clearInterval(myInterval);
+                    myInterval = setInterval(placePipes, changePipe); //every 0.8 seconds
+                break;
+                case 135:
+                    velocityX = -4.5;
+                    changePipe = 700;
+                    clearInterval(myInterval);
+                    myInterval = setInterval(placePipes, changePipe); //every 0.7 seconds
+                break;
+            }
         }
-
+        
         if (detectCollision(bird, pipe)) {
             gameOver = true;
-            // gravity = 0.4;
-            // velocityX = -2;
+            velocityX = -2;      // reset the values 
+            clearInterval(myInterval);
+            changePipe = 1500;
+            myInterval = setInterval(placePipes, changePipe); //every 1.5 seconds
         }
     }
 
@@ -143,8 +173,8 @@ function update() {
             context.fillText("You have equalled the highest score", 5 , 95);
         }
         // console.log(highScore);
-        context.fillText("Highest Score now: ", 5, 75);
-        context.fillText(highScore, 137, 75);    
+        context.fillText("Current Highest Score: ", 5, 75);
+        context.fillText(highScore, 159, 75);    
         context.font="45px sans-serif";
     }
 }
